@@ -27,15 +27,21 @@ let teoriaNiejeVacsia = true;
 const inputsTotal = document.querySelectorAll(".input-celkom");
 const inputsTheory = document.querySelectorAll(".input-teoria");
 
-const date = new Date;
+
+let pridavac = 0;
+
+
+//const date = new Date;
+let date  = new Date(new Date().setDate(new Date().getDate()+pridavac));
 const day = date.getDate();
 const month = date.getMonth();
-const today = day.toString() + month.toString();
-const last7Days = [];
+const daysInMoths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const dateID = `${day}${month}`;
+const last7dateID = [];
 
-class NewDay {
+class StoredData {
     constructor(totalMinutes, htmlTotal, htmlTheory, cssTotal, cssTheory, jsTotal, jsTheory, reactTotal, reactTheory,
-        nodejsTotal, nodejsTheory, expressTotal, expressTheory, databasesTotal, databasesTheory, date, day, month){
+        nodejsTotal, nodejsTheory, expressTotal, expressTheory, databasesTotal, databasesTheory, dateID, day, month){
             this.totalMinutes = totalMinutes;
             this.htmlTotal = htmlTotal;
             this.htmlTheory = htmlTheory;
@@ -51,26 +57,37 @@ class NewDay {
             this.expressTheory = expressTheory;
             this.databasesTotal = databasesTotal;
             this.databasesTheory = databasesTheory;
-            this.date = date;
+            this.dateID = dateID;
             this.day = day;
             this.month = month;
         }
 }
 
-console.log(today)
+
 
 const storedMinutes = {
+    last7Days : [
+        new StoredData(1000,100,0,300,0,200,0,300,0,100,0,0,0,0,0, "225"),
+        new StoredData(1000,200,0,100,0,300,0,200,0,200,0,0,0,0,0,"215"),
+        new StoredData(1100,300,300,300,200,200,100,200,200,100,0,0,0,0,0, "195"),
+        new StoredData(0,0,0,100,0,0,0,0,0,0,0,0,0,0,0),
+        new StoredData(0,0,0,0,200,0,0,0,0,0,0,0,0,0,0),
+        new StoredData(0,0,0,0,0,300,0,0,0,0,0,0,0,0,0),
+        new StoredData(0,0,0,0,0,0,500,0,0,0,0,0,0,0,0),
+    ],
+    last30Days : [],
 
-    days7 : new NewDay(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+    last7Total : new StoredData(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
 
-    days30 : {
+    last30Total : new StoredData(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
 
-    },
-
-    total : new NewDay(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-    
+    total : new StoredData(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 }
 
+
+
+
+window.addEventListener("load", () => createTodaysData(dateID, day, month))
 
 startStopBtn.addEventListener("click", () => {
     changeBtnText();
@@ -95,71 +112,163 @@ potvrdBtn.addEventListener("click", () => {
 
         redistributeStoredMinutes();
         updateGraphTotal();
+        pushDataFromArrayToTotal();
+        updateGraph7Days();
 
     }
 })
 
 
-function createTodaysData(todaysDate) {
-    daysData = new NewDay(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, todaysDate);
-    if (last7Days.length = 7){
-        last7Days.unshift(daysData);
-        last7Days.pop();
-    }else{
-        last7Days.unshift(daysData);
-    } 
-
-    console.log(last7Days);
-}
-createTodaysData(today);
-
-function modifyTodaysData(indexOf) {
-    last7Days[indexOf].totalMinutes += straveneMinuty;
-    last7Days[indexOf].htmlTotal += parseInt(inputHtmlTotal.value);
-    last7Days[indexOf].htmlTheory += parseInt(inputHtmlTheory.value);
-    last7Days[indexOf].cssTotal += parseInt(inputCssTotal.value);
-    last7Days[indexOf].cssTheory += parseInt(inputCssTheory.value);
-    last7Days[indexOf].jsTotal += parseInt(inputJsTotal.value);
-    last7Days[indexOf].jsTheory += parseInt(inputJsTheory.value);
-    last7Days[indexOf].reactTotal += parseInt(inputReactTotal.value);
-    last7Days[indexOf].reactTheory  += parseInt(inputReactTheory.value);
-    last7Days[indexOf].nodejsTotal += parseInt(inputNodejsTotal.value);
-    last7Days[indexOf].nodejsTheory += parseInt(inputNodejsTheory.value);
-    last7Days[indexOf].expressTotal += parseInt(inputExpressTotal.value);
-    last7Days[indexOf].expressTheory += parseInt(inputExpressTheory.value);
-    last7Days[indexOf].databasesTotal += parseInt(inputDatabasesTotal.value);
-    last7Days[indexOf].databasesTheory += parseInt(inputDatabasesTheory.value);
-}
+// helper code
+const minuty = document.querySelector("#pridajminuty");
+const datum = document.querySelector("#zvysdatum");
+const reload = document.querySelector("#nacitajstranku");
 
 
-function chcekForTodaysData(){
-    setEmptyInputValue(inputsTotal);
-    setEmptyInputValue(inputsTheory);
-    if (last7Days.length>0){
-        last7Days.forEach(day => {
-            if (day.date === today){
-                modifyTodaysData(last7Days.indexOf(day));
-            }else{
-                createTodaysData(today);
-            }
-        })
-    }else{
-        createTodaysData(today);
+minuty.addEventListener("click", ()=> {
+    straveneMinuty = 900
+})
+datum.addEventListener("click", ()=> {
+    pridavac++
+    date  = new Date(new Date().setDate(new Date().getDate()+pridavac));
+})
+reload.addEventListener("click", ()=> {
+    createTodaysData(dateID, day, month);
+    console.log(storedMinutes.total);
+    console.log(storedMinutes.last7Days)
+})
+//potialto asi
+
+function pushDataFromArrayToTotal() {
+    for(let i=0; i<7; i++){
+        storedMinutes.last7Total.totalMinutes += storedMinutes.last7Days[i].totalMinutes;
+        storedMinutes.last7Total.htmlTotal += storedMinutes.last7Days[i].htmlTotal;
+        storedMinutes.last7Total.htmlTheory += storedMinutes.last7Days[i].htmlTheory;
+        storedMinutes.last7Total.cssTotal += storedMinutes.last7Days[i].cssTotal;
+        storedMinutes.last7Total.cssTheory += storedMinutes.last7Days[i].cssTheory;
+        storedMinutes.last7Total.jsTotal += storedMinutes.last7Days[i].jsTotal;
+        storedMinutes.last7Total.jsTheory += storedMinutes.last7Days[i].jsTheory;
+        storedMinutes.last7Total.reactTotal += storedMinutes.last7Days[i].reactTotal;
+        storedMinutes.last7Total.reactTheory += storedMinutes.last7Days[i].reactTheory;
+        storedMinutes.last7Total.nodejsTotal += storedMinutes.last7Days[i].nodejsTotal;
+        storedMinutes.last7Total.nodejsTheory += storedMinutes.last7Days[i].nodejsTheory;
+        storedMinutes.last7Total.expressTotal += storedMinutes.last7Days[i].expressTotal;
+        storedMinutes.last7Total.expressTheory += storedMinutes.last7Days[i].expressTheory;
+        storedMinutes.last7Total.databasesTotal += storedMinutes.last7Days[i].databasesTotal;
+        storedMinutes.last7Total.databasesTheory += storedMinutes.last7Days[i].databasesTheory;
     }
-    console.log(last7Days);
+}
+
+
+function createTodaysData(todaysID, todaysDay, todaysMonth) {
+    daysData = new StoredData(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, todaysID, todaysDay, todaysMonth);
+    if (storedMinutes.last7Days.length === 7){
+        if(storedMinutes.last7Days[0].dateID !== dateID){
+            storedMinutes.last7Days.unshift(daysData);
+            storedMinutes.last7Days.pop();
+            checkForSkippedDays();
+        }else{
+            return;
+        }
+    }else{
+        storedMinutes.last7Days.unshift(daysData);
+        populateEmptyDays()
+    } 
+    console.log(storedMinutes.last7Days);
+}
+
+
+function populateEmptyDays(){
+    const emptySpaces = 7 - (storedMinutes.last7Days.length);
+    for(let i = storedMinutes.last7Days.length; i<=emptySpaces; i++){
+        let emptyDay = new StoredData(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+        storedMinutes.last7Days.push(emptyDay);
+    }
+}
+
+
+function checkForSkippedDays() {
+    createLast7DaysOfIDs();
+        
+    for(let i = 0; i<last7dateID.length; i++){
+        if(storedMinutes.last7Days[i].dateID !== last7dateID[i]){
+            storedMinutes.last7Days.splice(i, 0, createDayWithDateID(last7dateID[i]));
+            storedMinutes.last7Days.pop();
+        }
+    }
+}
+
+
+function createLast7DaysOfIDs(){
+    for(let i=0; i<7; i++){
+        const localDate = new Date(new Date().setDate(new Date().getDate()-i+pridavac));
+        const localDay = localDate.getDate();
+        const localMonth = localDate.getMonth();
+        const localID = `${localDay}${localMonth}`;
+
+        last7dateID.push(localID);
+    }
+}
+
+
+function createDayWithDateID(dateID) {
+    let emptyDay = new StoredData(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,dateID,0,0);
+    return emptyDay;
+}
+
+
+
+
+
+
+
+function modifyTodaysData() {
+    storedMinutes.last7Days[0].totalMinutes += straveneMinuty;
+    storedMinutes.last7Days[0].htmlTotal += parseInt(inputHtmlTotal.value);
+    storedMinutes.last7Days[0].htmlTheory += parseInt(inputHtmlTheory.value);
+    storedMinutes.last7Days[0].cssTotal += parseInt(inputCssTotal.value);
+    storedMinutes.last7Days[0].cssTheory += parseInt(inputCssTheory.value);
+    storedMinutes.last7Days[0].jsTotal += parseInt(inputJsTotal.value);
+    storedMinutes.last7Days[0].jsTheory += parseInt(inputJsTheory.value);
+    storedMinutes.last7Days[0].reactTotal += parseInt(inputReactTotal.value);
+    storedMinutes.last7Days[0].reactTheory  += parseInt(inputReactTheory.value);
+    storedMinutes.last7Days[0].nodejsTotal += parseInt(inputNodejsTotal.value);
+    storedMinutes.last7Days[0].nodejsTheory += parseInt(inputNodejsTheory.value);
+    storedMinutes.last7Days[0].expressTotal += parseInt(inputExpressTotal.value);
+    storedMinutes.last7Days[0].expressTheory += parseInt(inputExpressTheory.value);
+    storedMinutes.last7Days[0].databasesTotal += parseInt(inputDatabasesTotal.value);
+    storedMinutes.last7Days[0].databasesTheory += parseInt(inputDatabasesTheory.value);
+}
+
+function modifyTotalData() {
+    storedMinutes.total.totalMinutes += straveneMinuty;
+    storedMinutes.total.htmlTotal += parseInt(inputHtmlTotal.value);
+    storedMinutes.total.htmlTheory += parseInt(inputHtmlTheory.value);
+    storedMinutes.total.cssTotal += parseInt(inputCssTotal.value);
+    storedMinutes.total.cssTheory += parseInt(inputCssTheory.value);
+    storedMinutes.total.jsTotal += parseInt(inputJsTotal.value);
+    storedMinutes.total.jsTheory += parseInt(inputJsTheory.value);
+    storedMinutes.total.reactTotal += parseInt(inputReactTotal.value);
+    storedMinutes.total.reactTheory += parseInt(inputReactTheory.value);
+    storedMinutes.total.nodejsTotal += parseInt(inputNodejsTotal.value);
+    storedMinutes.total.nodejsTheory += parseInt(inputNodejsTheory.value);
+    storedMinutes.total.expressTotal += parseInt(inputExpressTotal.value);
+    storedMinutes.total.expressTheory += parseInt(inputExpressTheory.value);
+    storedMinutes.total.databasesTotal += parseInt(inputDatabasesTotal.value);
+    storedMinutes.total.databasesTheory += parseInt(inputDatabasesTheory.value);
 }
 
 
 
 function updateGraphTotal(){
-    const graphDescription = document.querySelector("#popis-celkom");
-    const graphHtml = document.querySelector(".html-celkom");
-    const graphCss = document.querySelector(".css-celkom");
-    const graphJs = document.querySelector(".js-celkom");
-    const graphReact = document.querySelector(".react-celkom");
-    const graphNodejs = document.querySelector(".node-js-celkom");
-    const graphExpress = document.querySelector(".express-celkom");
-    const graphDatabases = document.querySelector(".databases-celkom");
+    const graphDescription = document.querySelector(`#popis-celkom`);
+    const graphHtml = document.querySelector(`.html-celkom`);
+    const graphCss = document.querySelector(`.css-celkom`);
+    const graphJs = document.querySelector(`.js-celkom`);
+    const graphReact = document.querySelector(`.react-celkom`);
+    const graphNodejs = document.querySelector(`.node-js-celkom`);
+    const graphExpress = document.querySelector(`.express-celkom`);
+    const graphDatabases = document.querySelector(`.databases-celkom`);
 
     graphDescription.innerText = `celkom - ${Math.floor(storedMinutes.total.totalMinutes/60)} h a ${storedMinutes.total.totalMinutes%60} m`;
 
@@ -180,6 +289,35 @@ function updateGraphTotal(){
     graphDatabases.children[1].innerText = `${Math.floor(storedMinutes.total.databasesTotal/60)} h`;
 }
 
+function updateGraph7Days(){
+    const graphDescription = document.querySelector(`#popis-7dni`);
+    const graphHtml = document.querySelector(`.html-7dni`);
+    const graphCss = document.querySelector(`.css-7dni`);
+    const graphJs = document.querySelector(`.js-7dni`);
+    const graphReact = document.querySelector(`.react-7dni`);
+    const graphNodejs = document.querySelector(`.node-js-7dni`);
+    const graphExpress = document.querySelector(`.express-7dni`);
+    const graphDatabases = document.querySelector(`.databases-7dni`);
+
+    graphDescription.innerText = `celkom - ${Math.floor(storedMinutes.last7Total.totalMinutes/60)} h a ${storedMinutes.last7Total.totalMinutes%60} m`;
+
+    graphHtml.style.width = `${Math.floor((storedMinutes.last7Total.htmlTotal/storedMinutes.last7Total.totalMinutes)*100)}%`;
+    graphCss.style.width = `${Math.floor((storedMinutes.last7Total.cssTotal/storedMinutes.last7Total.totalMinutes)*100)}%`;
+    graphJs.style.width = `${Math.floor((storedMinutes.last7Total.jsTotal/storedMinutes.last7Total.totalMinutes)*100)}%`;
+    graphReact.style.width = `${Math.floor((storedMinutes.last7Total.reactTotal/storedMinutes.last7Total.totalMinutes)*100)}%`;
+    graphNodejs.style.width = `${Math.floor((storedMinutes.last7Total.nodejsTotal/storedMinutes.last7Total.totalMinutes)*100)}%`;
+    graphExpress.style.width = `${Math.floor((storedMinutes.last7Total.expressTotal/storedMinutes.last7Total.totalMinutes)*100)}%`;
+    graphDatabases.style.width = `${Math.floor((storedMinutes.last7Total.databasesTotal/storedMinutes.last7Total.totalMinutes)*100)}%`;
+
+    graphHtml.children[1].innerText = `${Math.floor(storedMinutes.last7Total.htmlTotal/60)} h`;
+    graphCss.children[1].innerText = `${Math.floor(storedMinutes.last7Total.cssTotal/60)} h`;
+    graphJs.children[1].innerText = `${Math.floor(storedMinutes.last7Total.jsTotal/60)} h`;
+    graphReact.children[1].innerText = `${Math.floor(storedMinutes.last7Total.reactTotal/60)} h`;
+    graphNodejs.children[1].innerText = `${Math.floor(storedMinutes.last7Total.nodejsTotal/60)} h`;
+    graphExpress.children[1].innerText = `${Math.floor(storedMinutes.last7Total.expressTotal/60)} h`;
+    graphDatabases.children[1].innerText = `${Math.floor(storedMinutes.last7Total.databasesTotal/60)} h`;
+}
+
 
 function createErrorMsg(errorMsg){
     const div = document.createElement("div");
@@ -193,38 +331,22 @@ function createErrorMsg(errorMsg){
 }
 
 function redistributeStoredMinutes() {
-    setEmptyInputValue(inputsTotal);
-    setEmptyInputValue(inputsTheory);
+    setEmptyInputValueToZero(inputsTotal);
+    setEmptyInputValueToZero(inputsTheory);
 
-    chcekForTodaysData();
-
-    storedMinutes.total.totalMinutes += straveneMinuty;
-    storedMinutes.total.htmlTotal += parseInt(inputHtmlTotal.value);
-    storedMinutes.total.htmlTheory += parseInt(inputHtmlTheory.value);
-    storedMinutes.total.cssTotal += parseInt(inputCssTotal.value);
-    storedMinutes.total.cssTheory += parseInt(inputCssTheory.value);
-    storedMinutes.total.jsTotal += parseInt(inputJsTotal.value);
-    storedMinutes.total.jsTheory += parseInt(inputJsTheory.value);
-    storedMinutes.total.reactTotal += parseInt(inputReactTotal.value);
-    storedMinutes.total.reactTheory += parseInt(inputReactTheory.value);
-    storedMinutes.total.nodejsTotal += parseInt(inputNodejsTotal.value);
-    storedMinutes.total.nodejsTheory += parseInt(inputNodejsTheory.value);
-    storedMinutes.total.expressTotal += parseInt(inputExpressTotal.value);
-    storedMinutes.total.expressTheory += parseInt(inputExpressTheory.value);
-    storedMinutes.total.databasesTotal += parseInt(inputDatabasesTotal.value);
-    storedMinutes.total.databasesTheory += parseInt(inputDatabasesTheory.value);
+    modifyTodaysData();
+    modifyTotalData();
 
     inputsTotal.forEach(input => input.value = "");
     inputsTheory.forEach(input => input.value = "");
     straveneMinuty = 0;
     updateMinutesForDistribution();
-
-    //console.log(storedMinutes.total)
 }
 
+
 function chcekIfTheoryIsGreater() {
-    setEmptyInputValue(inputsTotal);
-    setEmptyInputValue(inputsTheory);
+    setEmptyInputValueToZero(inputsTotal);
+    setEmptyInputValueToZero(inputsTheory);
     for(let i = 0; i<inputsTotal.length; i++){
         if (parseInt(inputsTotal[i].value) >= parseInt(inputsTheory[i].value)){
             teoriaNiejeVacsia = true;
@@ -238,7 +360,7 @@ function chcekIfTheoryIsGreater() {
 }
 
 
-function setEmptyInputValue(inputField) {
+function setEmptyInputValueToZero(inputField) {
     inputField.forEach(input => {
         if (input.value.length === 0){
             input.value = 0
