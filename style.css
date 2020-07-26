@@ -8,7 +8,6 @@ body{
     display: flex;
     justify-content: center;
     align-items: center ;
-
 }
 
 .wrapper{
@@ -57,6 +56,45 @@ body{
     position: relative;
 }
 
+.tabulka:hover{
+    box-shadow: 5px 5px 10px rgb(196, 196, 196);
+    border: 1px solid rgb(226, 226, 226);
+}
+
+.tabulka:hover .graf>p{
+    display: block;
+}
+
+.sto, .sedempat, .patnula, .dvapat{
+    position: absolute;
+    border-right: rgb(226, 226, 226) 1px dashed;
+    height: 100%;
+
+}
+
+.sto p, .sedempat p, .patnula p, .dvapat p{
+    position: relative;
+    right: -98.5%;
+    bottom: -290px;
+    color: rgb(70, 70, 70);
+}
+
+.sto{
+    width: 92%;
+}
+
+.sedempat{
+    width: 69%;
+}
+
+.patnula{
+    width: 46%;
+}
+
+.dvapat{
+    width: 23%;
+}
+
 .popis-tabulky{
     position: absolute;
     left: -120px;
@@ -70,62 +108,64 @@ body{
 
 .html{
     height: 10%;
-    width: 20%;
-    border: 3px solid rgb(255, 81, 0);
+    width: 1%;
+    border: 2px solid rgb(255, 81, 0);
     background-image: linear-gradient(to right, rgb(255, 120, 58) , rgb(255, 81, 0));
     border-left: none;
 }
 
 .css{
     height: 10%;
-    width: 30%;
-    border: 3px solid rgb(0, 68, 255);
+    width: 1%;
+    border: 2px solid rgb(0, 68, 255);
     background-image: linear-gradient(to right, rgb(79, 122, 241) , rgb(0, 68, 255));
     border-left: none;
 }
 
 .js{
     height: 10%;
-    width: 80%;
-    border: 3px solid rgb(255, 196, 3);
+    width: 1%;
+    border: 2px solid rgb(255, 196, 3);
     background-image: linear-gradient(to right, rgb(248, 217, 114) , rgb(255, 196, 3));
     border-left: none;
 }
 
 .react{
     height: 10%;
-    width: 10%;
-    border: 3px solid rgb(0, 162, 255);
+    width: 1%;
+    border: 2px solid rgb(0, 162, 255);
     background-image: linear-gradient(to right, rgb(87, 189, 248) , rgb(0, 162, 255));
     border-left: none;
 }
 
 .node-js{
     height: 10%;
-    width: 10%;
-    border: 3px solid rgb(0, 167, 14);
+    width: 1%;
+    border: 2px solid rgb(0, 167, 14);
     background-image: linear-gradient(to right, rgb(83, 189, 92) , rgb(0, 167, 14));
     border-left: none;
 }
 
 .express{
     height: 10%;
-    width: 10%;
-    border: 3px solid rgb(0, 194, 48);
+    width: 1%;
+    border: 2px solid rgb(0, 194, 48);
     background-image: linear-gradient(to right, rgb(95, 255, 156) , rgb(0, 194, 48));
     border-left: none;
 }
 
 .databases{
     height: 10%;
-    width: 10%;
-    border: 3px solid rgb(0, 110, 255);
+    width: 1%;
+    border: 2px solid rgb(0, 110, 255);
     background-image: linear-gradient(to right, rgb(72, 167, 255) , rgb(0, 110, 255));
     border-left: none;
 }
 
 .graf{
     position: relative;
+    max-width: 92%;
+    cursor: pointer;
 }
 
 .graf > p{
@@ -134,17 +174,29 @@ top: 50%;
 transform: translateY(-50%);
 right: -45px;
 font-size: 1.2rem;
+display: none;
+}
 
+.graf:hover .teoria{
+    display: flex;
 }
 
 .teoria{
     height: 100%;
     float: right;
     background-color: rgba(255, 248, 220, 0.377);
-    width: 30%;
-    display: flex;
+    width: 2%;
+    display: none;
     align-items: center;
     justify-content: center;
+}
+
+.teoria p{
+    display: none;
+}
+
+.teoria:hover p{
+    display: block;
 }
 
 .tlacitko-a-casovac{
@@ -193,7 +245,7 @@ font-size: 1.2rem;
     transform: translateX(-50%);
     border: 1px solid rgb(241, 241, 241);
     box-shadow: 3px 3px 8px rgb(224, 224, 224) ;
-    display: block;
+    display: none;
 }
 
 .fa-times{
@@ -289,4 +341,71 @@ font-size: 1.2rem;
 .spodna-sekcia button:hover{
     border: 1px solid rgb(221, 221, 221);
     box-shadow: 4px 4px 10px rgb(194, 194, 194) ;
+}
+
+.modify-data{
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    background-color: white;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid rgb(241, 241, 241);
+    box-shadow: 3px 3px 8px rgb(224, 224, 224) ;
+    display: none;
+}
+
+.open-modify{
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.confirm{
+    position: absolute;
+    background: white;
+    height: 20%;
+    width: 70%;
+    min-width: 555px;
+    top: 3%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid rgb(241, 241, 241);
+    box-shadow: 3px 3px 8px rgb(224, 224, 224) ;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.7rem;
+}
+
+.confirm p{
+    position: relative;
+    margin-top: 50px;
+}
+
+.btns{
+    margin-bottom: 30px;
+}
+
+.btns button{
+    padding: 5px;
+    border: 1px solid rgb(241, 241, 241);
+    box-shadow: 3px 3px 8px rgb(224, 224, 224) ;
+    background-color: white;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: rgb(70, 70, 70);
+    width: 150px;
+}
+
+.btns button:hover{
+    border: 1px solid rgb(221, 221, 221);
+    box-shadow: 4px 4px 10px rgb(194, 194, 194) ;
+}
+
+.created{
+    position: absolute;
+    left: 15px;
+    bottom: 20px;
+    font-size: 13px;
 }
